@@ -1,0 +1,37 @@
+1. Data Loading and Preparation
+First, I loaded the breast-cancer.csv file. The key preparation steps were:
+Target Encoding: The diagnosis column was converted from categorical ('M', 'B') to numeric ('M' = 1, 'B' = 0).
+Feature Selection: The id column was dropped as it's not a predictive feature.
+Feature Scaling: All 30 feature columns were scaled using StandardScaler. 
+This is a crucial step for SVMs, as they are sensitive to the range of the data.
+Data Split: The scaled data was split into a training set (70%) and a testing set (30%).
+2. SVM with Linear and RBF Kernels (Default)
+I trained two SVM models on the training data with their default settings to establish a baseline.
+Linear Kernel SVM: This model assumes the data is linearly separable.
+Test Set Accuracy: 97.66\%
+Classification Report:
+precision    recall  f1-score   support
+   Benign (B)       0.98      0.98      0.98       108
+Malignant (M)       0.97      0.97      0.97        63
+RBF Kernel SVM: This model can handle non-linear relationships.
+Test Set Accuracy: 97.08\%
+Classification Report:
+precision    recall  f1-score   support
+   Benign (B)       0.98      0.97      0.98       108
+Malignant (M)       0.95      0.97      0.96        63
+Both models performed exceptionally well out-of-the-box, with the linear kernel having a slight edge.
+3. Hyperparameter Tuning & Cross-Validation
+To find the optimal model,  perform a GridSearchCV with 5-fold cross-validation. This process systematically tested a grid of parameters:
+Kernels: ['linear', 'rbf']
+C (Regularization): [0.1, 1, 10, 100]
+Gamma (RBF Coefficient): [1, 0.1, 0.01, 0.001, 0.0001]
+The grid search identified the best-performing model based on the average cross-validation accuracy.
+Best Parameters Found: {'C': 1, 'kernel': 'linear'}
+Best Cross-Validation Accuracy: 97.48\%
+Final Test Set Accuracy (with best model): 97.66\%
+The results confirm that a linear kernel with a C value of 1 (which is often the default) is the most effective model for this dataset, suggesting the classes are linearly separable.
+4. Decision Boundary Visualization (using PCA)
+Since the dataset has 30 features, it's impossible to visualize the decision boundary directly. To create a 2D plot, I used Principal Component Analysis (PCA) to reduce the 30 features down to the 2 components that capture the most variance (they captured 63.24\% of the total variance).
+I then trained the best SVM model (kernel='linear', C=1) on this 2D-transformed data. The plot below shows the resulting linear decision boundary separating the two classes in this 2D space.
+SVM Decision Boundary with PCA-Reduced Data
+The plot shows the two principal components on the X and Y axes. Each point is a tumor, colored by its actual diagnosis ('Benign' or 'Malignant'). The line is the decision boundary learned by the linear SVM, which effectively separates the two classes.
